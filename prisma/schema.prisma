@@ -1,0 +1,204 @@
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["fullTextSearch", "fullTextIndex"]
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id              String           @id @default(auto()) @map("_id") @db.ObjectId
+  name    String
+  email   String  @unique
+  phone   String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Category {
+  id     String   @id @default(auto()) @map("_id") @db.ObjectId
+  name   String   @unique
+}
+
+/// Multilingual string stored as JSON: { hi: string, en: string }
+/// Use consistent keys: "hi" and "en" for Hindi/English.
+
+// High-level categories for the "Actors & Influencers" area
+enum PersonCategory {
+  ACTOR
+  INFLUENCER
+}
+
+// Civil services for Officers page
+enum ServiceType {
+  IAS
+  IPS
+  PCS
+  RAS
+}
+
+// Political offices for Politicians page
+enum PoliticalOfficeType {
+  MP
+  MLA
+  MINISTER
+  ICON
+}
+
+// Sports groupings for Sports page
+enum SportCategory {
+  CRICKET
+  WRESTLING
+  PARA_ATHLETE
+  FENCING
+  DIVYANG_CRICKET
+  WUSHU
+  OTHER
+}
+
+// Platforms for outbound media links
+enum MediaPlatform {
+  INSTAGRAM
+  YOUTUBE
+  TWITTER
+  FACEBOOK
+  WIKIPEDIA
+  WEBSITE
+}
+
+// Award groupings per site filters
+enum AwardCategory {
+  CIVILIAN
+  SPORTS
+  GALLANTRY
+  OTHER
+}
+
+// Reusable person profile used across pages (Actors/Influencers, Officers, Politicians, Sports, Awardees)
+model Person {
+  id         String  @id @default(auto()) @map("_id") @db.ObjectId
+  name       Json    // { hi, en }
+  imageUrl   String?
+  summary    String? // 2-3 line description for display
+  bio        Json?
+  isActive   Boolean @default(true)
+  order      Int     @default(0)
+
+  // Many categories possible; use join model for actor/influencer
+  categories PersonCategoryAssignment[]
+
+  // Optional 1-1 role profiles
+  officer    OfficerProfile?
+  politician PoliticianProfile?
+  sport      SportProfile?
+
+  // Relations
+  mediaLinks MediaLink[]
+  awards     Award[]
+
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([isActive, order])
+}
+
+model PersonCategoryAssignment {
+  id        String          @id @default(auto()) @map("_id") @db.ObjectId
+  personId  String          @db.ObjectId
+  person    Person          @relation(fields: [personId], references: [id])
+  category  PersonCategory
+
+  @@unique([personId, category])
+  @@index([category])
+}
+
+// Officers: IAS/IPS/PCS/RAS
+model OfficerProfile {
+  id          String      @id @default(auto()) @map("_id") @db.ObjectId
+  personId    String      @unique @db.ObjectId
+  person      Person      @relation(fields: [personId], references: [id])
+  service     ServiceType
+  post        String?
+  cadre       String?
+  location    String?
+  description Json?
+
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  @@index([service])
+}
+
+// Politicians: MP/MLA/Minister/Icon
+model PoliticianProfile {
+  id           String              @id @default(auto()) @map("_id") @db.ObjectId
+  personId     String              @unique @db.ObjectId
+  person       Person              @relation(fields: [personId], references: [id])
+  officeType   PoliticalOfficeType
+  postTitle    String?
+  constituency String?
+  region       String?
+  description  Json?
+
+  createdAt    DateTime            @default(now())
+  updatedAt    DateTime            @updatedAt
+
+  @@index([officeType])
+}
+
+// Sports personalities
+model SportProfile {
+  id           String        @id @default(auto()) @map("_id") @db.ObjectId
+  personId     String        @unique @db.ObjectId
+  person       Person        @relation(fields: [personId], references: [id])
+  category     SportCategory
+  sportName    String?
+  description  Json?
+
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+
+  @@index([category])
+}
+
+// Per-person awards, supports filters: Civilian, Sports, Gallantry, Other
+model Award {
+  id          String         @id @default(auto()) @map("_id") @db.ObjectId
+  personId    String         @db.ObjectId
+  person      Person         @relation(fields: [personId], references: [id])
+  title       String
+  year        Int?
+  category    AwardCategory
+  description Json?
+  imageUrl    String?
+
+  createdAt   DateTime       @default(now())
+
+  @@index([category, year])
+  @@unique([personId, title, year])
+}
+
+// External media links for a person (Instagram, YouTube, etc.)
+model MediaLink {
+  id        String         @id @default(auto()) @map("_id") @db.ObjectId
+  personId  String         @db.ObjectId
+  person    Person         @relation(fields: [personId], references: [id])
+  platform  MediaPlatform
+  url       String
+  label     String?
+
+  createdAt DateTime       @default(now())
+
+  @@index([personId])
+}
+
+// Gotra directory
+model Gotra {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  name      String   @unique
+  slug      String   @unique
+  aliases   String[]
+}
