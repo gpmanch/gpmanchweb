@@ -24,7 +24,7 @@ export async function getCurrentUserId(): Promise<string | null> {
     if (!token) return null;
 
     try {
-        const payload = jwt.verify(token, getSecret("ACCESS_TOKEN_SECRET", "dev-access-secret"));
+        const payload = jwt.verify(token, getSecret("ACCESS_SECRET", "dev-access-secret"));
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         return typeof payload === "object" && payload && "id" in payload ? (payload as any).id : null;
     } catch {

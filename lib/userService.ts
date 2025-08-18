@@ -22,10 +22,10 @@ function getSecret(envVarName: string, devFallback?: string): Secret {
     return value as Secret;
 }
 
-const ACCESS_SECRET: Secret = getSecret("ACCESS_TOKEN_SECRET", "dev-access-secret");
-const ACCESS_EXPIRES_IN = (process.env.ACCESS_TOKEN_EXPIRY ?? "15m") as unknown as SignOptions["expiresIn"];
-const REFRESH_SECRET: Secret = getSecret("REFRESH_TOKEN_SECRET", "dev-refresh-secret");
-const REFRESH_EXPIRES_IN = (process.env.REFRESH_TOKEN_EXPIRY ?? "7d") as unknown as SignOptions["expiresIn"];
+const ACCESS_SECRET: Secret = getSecret("ACCESS_SECRET", "dev-access-secret");
+const ACCESS_EXPIRES_IN = (process.env.ACCESS_EXPIRES_IN ?? "15m") as unknown as SignOptions["expiresIn"];
+const REFRESH_SECRET: Secret = getSecret("REFRESH_SECRET", "dev-refresh-secret");
+const REFRESH_EXPIRES_IN = (process.env. REFRESH_EXPIRES_IN ?? "7d") as unknown as SignOptions["expiresIn"];
 
 export async function createUser(data: CreateUserInput): Promise<User> {
     const hashedPassword = await bcrypt.hash(data.password, 10);
