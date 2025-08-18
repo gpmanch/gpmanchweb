@@ -17,7 +17,7 @@ const UserLayout = async ({
     return (
         <div className="h-full">
             <div className="fixed top-0 left-0 h-20 w-full z-40">
-                <CategoriesBar/>
+                <CategoriesBar userName={userName}/>
                 <Header/>
             </div>
 
