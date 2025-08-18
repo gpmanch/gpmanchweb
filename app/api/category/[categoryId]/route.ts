@@ -42,7 +42,7 @@ export async function GET(
 ) {
     try {
         // const { userId } = auth();
-        const { categoryId } = await params;
+        const { categoryId } = params;
 
         // if(!userId || !isTeacher(userId)) {
         //     return new NextResponse("Unauthorized request", { status: 401 })
@@ -78,7 +78,7 @@ export async function PATCH(
 ) {
     try {
         // const { userId } = auth();
-        const { categoryId } = await params;
+        const { categoryId } = params;
         const { title } = await req.json()
 
         // if(!userId || !isTeacher(userId)) {
