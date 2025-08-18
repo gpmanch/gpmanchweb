@@ -1,19 +1,13 @@
 import { db } from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
 
-interface RouteContext {
-    params: {
-      categoryId: string;
-    };
-}
-
 export async function DELETE(
     req: NextRequest,
-    context : RouteContext
+    context : { params: Promise<{ categoryId: string }> }
 ) {
     try {
         // const { userId } = auth();
-        const { categoryId } =  context.params;
+        const { categoryId } =  await context.params;
 
         // if(!userId || !isTeacher(userId)) {
         //     return new NextResponse("Unauthorized Request", { status: 401 })
@@ -44,11 +38,11 @@ export async function DELETE(
 
 export async function GET(
     req: NextRequest,
-    context : RouteContext
+    context : { params: Promise<{ categoryId: string }> }
 ) {
     try {
         // const { userId } = auth();
-        const { categoryId } =  context.params;
+        const { categoryId } = await context.params;
 
         // if(!userId || !isTeacher(userId)) {
         //     return new NextResponse("Unauthorized Request", { status: 401 })
@@ -79,10 +73,10 @@ export async function GET(
 
 export async function PATCH(
     req: NextRequest,
-    context : RouteContext
+    context : { params: Promise<{ categoryId: string }> }
 ) {
     try {
-        const { categoryId } =  context.params;
+        const { categoryId } = await context.params;
         const values = await req.json();
 
         const subCategory = await db.subCategory.update({
