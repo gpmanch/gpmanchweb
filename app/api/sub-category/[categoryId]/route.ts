@@ -3,11 +3,11 @@ import { NextResponse } from "next/server";
 
 export async function DELETE(
     req: Request,
-    { params } : { params: { categoryId: string } }
+    context : { params: { categoryId: string } }
 ) {
     try {
         // const { userId } = auth();
-        const { categoryId } = await params;
+        const { categoryId } = context.params;
 
         // if(!userId || !isTeacher(userId)) {
         //     return new NextResponse("Unauthorized request", { status: 401 })
@@ -38,11 +38,11 @@ export async function DELETE(
 
 export async function GET(
     req: Request,
-    { params } : { params: { categoryId: string } }
+    context : { params: { categoryId: string } }
 ) {
     try {
         // const { userId } = auth();
-        const { categoryId } = await params;
+        const { categoryId } = context.params;
 
         // if(!userId || !isTeacher(userId)) {
         //     return new NextResponse("Unauthorized request", { status: 401 })
@@ -73,10 +73,10 @@ export async function GET(
 
 export async function PATCH(
     req: Request,
-    { params } : { params: { categoryId: string } }
+    context : { params: { categoryId: string } }
 ) {
     try {
-        const { categoryId } = params;
+        const { categoryId } = context.params;
         const values = await req.json();
 
         const subCategory = await db.subCategory.update({
