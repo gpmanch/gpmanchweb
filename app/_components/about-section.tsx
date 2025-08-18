@@ -22,7 +22,7 @@ const Data = [
     titleEn: "Social Justice",
     descHi: "समाज के हर वर्ग के अधिकारों के लिए संघर्ष",
     descEn: "Fighting for the rights of every section of society",
-  },
+  }
 ]
 
 export default function AboutSection() {

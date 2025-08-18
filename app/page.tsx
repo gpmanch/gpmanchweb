@@ -1,3 +1,4 @@
+// import Header from "@/components/header";
 import AboutSection from "./_components/about-section";
 import ContactSection from "./_components/contact-section";
 import HeroSection from "./_components/hero-section";
@@ -6,11 +7,14 @@ import InstaReelsSection from "./_components/insta-reels-section";
 import LatestVideosSection from "./_components/latest-videos-section";
 import TeamSection from "./_components/team-section";
 import YouthEmpowerment from "./_components/youth-empowerment";
+import Footer from "@/components/footer";
 
 
 export default function Home() {
   return (
     <>
+      {/* <Header/> */}
+
       {/* Hero Section */}
       <HeroSection/>
 
@@ -34,6 +38,8 @@ export default function Home() {
 
       {/* Contact Section */}
       <ContactSection/>
+
+      <Footer/>
     </>
   );
 }
