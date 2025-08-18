@@ -1,12 +1,18 @@
 import { db } from "@/lib/prisma";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
+
+interface RouteContext {
+    params: {
+      categoryId: string;
+    };
+}
 
 export async function DELETE(
-  req: Request,
-  context: { params: { categoryId: string } }
+  req: NextRequest,
+  context: RouteContext
 ) {
   try {
-    const { categoryId } =  await context.params;
+    const { categoryId } =  context.params;
 
     const existingCategory = await db.category.findUnique({
       where: { id: categoryId },
@@ -28,11 +34,11 @@ export async function DELETE(
 }
 
 export async function GET(
-  req: Request,
-  context: { params: { categoryId: string } }
+  req: NextRequest,
+  context: RouteContext
 ) {
   try {
-    const { categoryId } =  await context.params;
+    const { categoryId } =  context.params;
 
     const existingCategory = await db.category.findUnique({
       where: { id: categoryId },
@@ -50,11 +56,11 @@ export async function GET(
 }
 
 export async function PATCH(
-  req: Request,
-  context: { params: { categoryId: string } }
+  req: NextRequest,
+  context: RouteContext
 ) {
   try {
-    const { categoryId } =  await context.params;
+    const { categoryId } =  context.params;
     const { title } = await req.json();
 
     const category = await db.category.update({

@@ -1,16 +1,22 @@
 import { db } from "@/lib/prisma";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
+
+interface RouteContext {
+    params: {
+      categoryId: string;
+    };
+}
 
 export async function DELETE(
-    req: Request,
-    context : { params: { categoryId: string } }
+    req: NextRequest,
+    context : RouteContext
 ) {
     try {
         // const { userId } = auth();
-        const { categoryId } =  await context.params;
+        const { categoryId } =  context.params;
 
         // if(!userId || !isTeacher(userId)) {
-        //     return new NextResponse("Unauthorized request", { status: 401 })
+        //     return new NextResponse("Unauthorized Request", { status: 401 })
         // }
 
         const existingCategory = await db.subCategory.findUnique({
@@ -37,15 +43,15 @@ export async function DELETE(
 }
 
 export async function GET(
-    req: Request,
-    context : { params: { categoryId: string } }
+    req: NextRequest,
+    context : RouteContext
 ) {
     try {
         // const { userId } = auth();
-        const { categoryId } =  await context.params;
+        const { categoryId } =  context.params;
 
         // if(!userId || !isTeacher(userId)) {
-        //     return new NextResponse("Unauthorized request", { status: 401 })
+        //     return new NextResponse("Unauthorized Request", { status: 401 })
         // }
 
         const existingCategory = await db.subCategory.findUnique({
@@ -72,11 +78,11 @@ export async function GET(
 }
 
 export async function PATCH(
-    req: Request,
-    context : { params: { categoryId: string } }
+    req: NextRequest,
+    context : RouteContext
 ) {
     try {
-        const { categoryId } =  await context.params;
+        const { categoryId } =  context.params;
         const values = await req.json();
 
         const subCategory = await db.subCategory.update({
