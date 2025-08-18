@@ -7,7 +7,7 @@ export async function DELETE(
 ) {
     try {
         // const { userId } = auth();
-        const { categoryId } = context.params;
+        const { categoryId } =  await context.params;
 
         // if(!userId || !isTeacher(userId)) {
         //     return new NextResponse("Unauthorized request", { status: 401 })
@@ -42,7 +42,7 @@ export async function GET(
 ) {
     try {
         // const { userId } = auth();
-        const { categoryId } = context.params;
+        const { categoryId } =  await context.params;
 
         // if(!userId || !isTeacher(userId)) {
         //     return new NextResponse("Unauthorized request", { status: 401 })
@@ -76,7 +76,7 @@ export async function PATCH(
     context : { params: { categoryId: string } }
 ) {
     try {
-        const { categoryId } = context.params;
+        const { categoryId } =  await context.params;
         const values = await req.json();
 
         const subCategory = await db.subCategory.update({

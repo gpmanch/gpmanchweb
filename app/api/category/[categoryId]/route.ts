@@ -6,7 +6,7 @@ export async function DELETE(
   context: { params: { categoryId: string } }
 ) {
   try {
-    const { categoryId } = context.params;
+    const { categoryId } =  await context.params;
 
     const existingCategory = await db.category.findUnique({
       where: { id: categoryId },
@@ -32,7 +32,7 @@ export async function GET(
   context: { params: { categoryId: string } }
 ) {
   try {
-    const { categoryId } = context.params;
+    const { categoryId } =  await context.params;
 
     const existingCategory = await db.category.findUnique({
       where: { id: categoryId },
@@ -54,7 +54,7 @@ export async function PATCH(
   context: { params: { categoryId: string } }
 ) {
   try {
-    const { categoryId } = context.params;
+    const { categoryId } =  await context.params;
     const { title } = await req.json();
 
     const category = await db.category.update({
