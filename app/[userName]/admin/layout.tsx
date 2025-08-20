@@ -1,14 +1,16 @@
 import { ReactNode } from "react";
 import Sidebar from "@/components/sidebar";
 
-const AdminLayout = ({
-  children,
-  params
-} : {
+interface AdminLayoutProps {
   children: ReactNode;
-  params: { userName: string };
-}) => {
-  const { userName } = params;
+  userName: string;
+}
+
+const AdminLayout = async({
+    children,
+    userName,
+  } : AdminLayoutProps
+) => {
   return  (
       <div className="flex w-full">
         <aside className="hidden fixed h-full md:block w-56 shrink-0">
