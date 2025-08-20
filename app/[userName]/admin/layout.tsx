@@ -1,7 +1,7 @@
 import { ReactNode } from "react";
 import Sidebar from "@/components/sidebar";
 
-interface AdminLayoutProps {
+interface LayoutProps {
   children: ReactNode;
   params: { userName: string };
 }
@@ -9,7 +9,7 @@ interface AdminLayoutProps {
 const AdminLayout = ({
     children,
     params
-  } : AdminLayoutProps
+  } : LayoutProps
 ) => {
   const { userName } = params;
   return  (
