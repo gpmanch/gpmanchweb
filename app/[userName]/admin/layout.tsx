@@ -1,16 +1,13 @@
 import { ReactNode } from "react";
 import Sidebar from "@/components/sidebar";
 
-interface LayoutProps {
+const AdminLayout = ({
+  children,
+  params
+} : {
   children: ReactNode;
   params: { userName: string };
-}
-
-const AdminLayout = ({
-    children,
-    params
-  } : LayoutProps
-) => {
+}) => {
   const { userName } = params;
   return  (
       <div className="flex w-full">
