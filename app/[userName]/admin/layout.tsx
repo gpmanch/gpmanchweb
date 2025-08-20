@@ -3,14 +3,15 @@ import Sidebar from "@/components/sidebar";
 
 interface AdminLayoutProps {
   children: ReactNode;
-  userName: string;
+  params: Promise<{ userName: string }>;
 }
 
 const AdminLayout = async({
     children,
-    userName,
+    params
   } : AdminLayoutProps
 ) => {
+  const { userName } = await params;
   return  (
       <div className="flex w-full">
         <aside className="hidden fixed h-full md:block w-56 shrink-0">
