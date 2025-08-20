@@ -3,7 +3,7 @@
 import Link from "next/link";
 import axios from "axios";
 import toast from "react-hot-toast";
-import { SubCategory, Category } from "@prisma/client";
+import { SubCategory } from "@prisma/client";
 import { ColumnDef } from "@tanstack/react-table";
 import { ArrowUpDown, Trash, Pencil } from "lucide-react";
 import { Button } from "@/components/ui/button";

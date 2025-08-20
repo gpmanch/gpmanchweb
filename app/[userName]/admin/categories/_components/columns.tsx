@@ -3,7 +3,6 @@
 import Link from "next/link";
 import axios from "axios";
 import toast from "react-hot-toast";
-import { Category } from "@prisma/client";
 import { ColumnDef } from "@tanstack/react-table";
 import { ArrowUpDown, Trash, Pencil } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -44,7 +43,7 @@ const CategoryActions = ({ id }: { id: string }) => {
     );
 };
 
-export const columns: ColumnDef<Category>[] = [
+export const columns: ColumnDef<{ id: string; name: string; heading: string; description: string; }>[] = [
     {
         accessorKey: "name",
         header: ({ column }) => (

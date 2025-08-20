@@ -5,7 +5,9 @@ import { getCategories } from "@/actions/get-categories";
 
 const CategoryPage = async () => {
 
-    const categories = await getCategories();
+    const categories = (await getCategories()).map(({ id, name, heading, description }) => ({
+        id, name, heading, description
+      }));
 
     return (
         <div className="p-6">
