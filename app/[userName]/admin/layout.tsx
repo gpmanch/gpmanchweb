@@ -6,7 +6,7 @@ interface AdminLayoutProps {
   params: { userName: string };
 }
 
-const AdminLayout = async({
+const AdminLayout = ({
     children,
     params
   } : AdminLayoutProps
