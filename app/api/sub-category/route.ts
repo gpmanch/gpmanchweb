@@ -6,7 +6,7 @@ export async function POST(
 ) {
     try {
         // const { userId } = auth();
-        const { title } = await req.json()
+        const { title, categoryId } = await req.json()
 
         // if(!userId || !isTeacher(userId)) {
         //     return new NextResponse("Unauthorized request", { status: 401 })
@@ -19,12 +19,13 @@ export async function POST(
         });
 
         if (existingCategory) {
-            return new NextResponse("Category already exists", { status: 400 });
+            return new NextResponse("Sub-Category already exists", { status: 400 });
         }
 
         const category = await db.subCategory.create({
             data: {
                 name: title,
+                categoryId: categoryId,
             }
         })
 
@@ -34,3 +35,14 @@ export async function POST(
         return new NextResponse("Internal Server Error", { status: 500 });
     }
 }
+
+export async function GET() {
+    try {
+      // Example fetch from DB
+      const subs = await db.subCategory.findMany();
+      return NextResponse.json(subs);
+    } catch (error) {
+      console.error("Error fetching sub-categories:", error);
+      return NextResponse.json({ error: "Failed to fetch sub-categories" }, { status: 500 });
+    }
+  }

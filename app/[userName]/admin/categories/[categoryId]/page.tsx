@@ -1,129 +1,64 @@
-"use client";
-
-import * as z from "zod";
-import axios from "axios";
+import { db } from "@/lib/prisma";
 import Link from "next/link";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import { useParams, useRouter } from "next/navigation";
-import toast from "react-hot-toast";
-import { use, useEffect, useState } from "react";
 
-import {
-    Form,
-    FormControl,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormMessage
-} from "@/components/ui/form";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { IconBadge } from "@/components/icon-badge";
+import { TitleForm } from "./_components/title-form";
+import { HeadingForm } from "./_components/heading-form";
+import { DescriptionForm } from "./_components/description-form";
+import { ArrowLeft, LayoutDashboard } from "lucide-react";
 
 
-const formSchema = z.object({
-    title: z.string().min(1, {
-        message: "Name is required!"
-    }),
-})
-
-const EditCategoryPage = ({
+const EditCategoryPage = async({
     params
 }: {
-    params: Promise<{ categoryId: string }>
+    params: Promise<{ categoryId: string, userName: string }>
 }) => {
-    const router = useRouter();
-    const { userName } = useParams<{ userName: string }>();
-    const { categoryId } = use(params);
-    const [oldCategoryName, setOldCategoryName] = useState("");
+    const { categoryId } = await params;
+    const userName = (await params).userName;
+    const category = await db.category.findUnique({
+        where: { id: categoryId },
+        include: { subCategory: true },
+    });
 
-    const form = useForm<z.infer<typeof formSchema>>({
-        resolver: zodResolver(formSchema),
-        defaultValues: {
-            title: oldCategoryName,
-        },
-    })
-
-    const { isSubmitting, isValid } = form.formState;
-
-    useEffect(() => {
-        const fetchCategory = async () => {
-            if (categoryId) {
-                try {
-                    const response = await axios.get(`/api/category/${categoryId}`);
-                    setOldCategoryName(response.data.name);
-                } catch (error) {
-                    console.error("Error fetching category:", error);
-                }
-            }
-        };
-
-        fetchCategory();
-    }, [categoryId]);
-
-    useEffect(() => {
-        if (oldCategoryName) {
-            form.reset({ title: oldCategoryName }); // Reset form values when oldCategoryName changes
-        }
-    }, [oldCategoryName, form]);
-
-    const onSubmit = async(values: z.infer<typeof formSchema>) => {
-        try {
-            await axios.patch(`/api/category/${categoryId}`, values);
-            router.push(`/${userName}/admin/categories`);
-            toast.success("Category Updated!");
-            router.refresh();
-        } catch (error) {
-            toast.error("Something went wrong!");
-            console.log("Something went wrong:", error);
-        }
-    }
+    const headingObj = {
+        en: (category?.heading as { en?: string; hi?: string } | null)?.en ?? "",
+        hi: (category?.heading as { en?: string; hi?: string } | null)?.hi ?? "",
+    };
+    const descriptionObj = {
+        en: (category?.description as { en?: string; hi?: string } | null)?.en ?? "",
+        hi: (category?.description as { en?: string; hi?: string } | null)?.hi ?? "",
+    };
 
     return (
-        <div className="max-w-5xl mx-auto flex md:items-center md:justify-center h-full p-6">
-            <div>
-                <h1 className="text-2xl">
-                    Name of Category
-                </h1>
-                <p className="text-sm text-slate-600">
-                    Don&apos;t worry, you can change this later.
-                </p>
-                <Form {...form}>
-                    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 mt-8">
-                        <FormField
-                            control={form.control}
-                            name="title"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>Category Title</FormLabel>
-                                    <FormControl>
-                                        <Input
-                                            disabled={isSubmitting}
-                                            {...field}
-                                        />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-                        <div className="flex items-center gap-x-2">
-                            <Link href={`/${userName}/admin/categories`}>
-                                <Button
-                                    type="button"
-                                    variant="ghost"
-                                >
-                                    Cancel
-                                </Button>
-                            </Link>
-                            <Button
-                                type="submit"
-                                disabled={!isValid || isSubmitting}
-                            >
-                                Save
-                            </Button>
-                        </div>
-                    </form>
-                </Form>
+        <div className="p-6">
+            <Link
+                href={`/${userName}/admin/categories`}
+                className="flex items-center text-sm hover:opacity-75 transition mb-6"
+            >
+                <ArrowLeft className="h-4 w-4 mr-2" />
+                Back to Categories
+            </Link>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-10">
+                <div>
+                    <div className="flex items-center gap-x-2">
+                        <IconBadge icon={LayoutDashboard} />
+                        <h2 className="text-xl">
+                            Customize your category
+                        </h2>
+                    </div>
+                    <TitleForm
+                        initialData = {{ name: category?.name || "" }}
+                        categoryId={categoryId}
+                    />
+                    <HeadingForm
+                        initialData = {{ heading: headingObj }}
+                        categoryId={categoryId}
+                    />
+                    <DescriptionForm
+                        initialData = {{ description: descriptionObj }}
+                        categoryId={categoryId}
+                    />
+                </div>
             </div>
         </div>
     );

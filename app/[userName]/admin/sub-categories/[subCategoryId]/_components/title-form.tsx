@@ -72,7 +72,7 @@ export const TitleForm = ({
                 )
             }
             <div className="font-medium flex items-center justify-between">
-                Course Title
+                Sub-Category Title
                 <Button onClick={toggleEdit} variant="ghost">
                     {
                         isEditing ? (

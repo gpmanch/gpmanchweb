@@ -1,10 +1,15 @@
 "use client";
 import { useLanguage } from "@/components/language";
+import { usePathname } from "next/navigation";
 
 export default function Footer() {
     const { isHindi } = useLanguage();
+    const pathname = usePathname()
+
+    const isAdminPage = pathname?.includes("admin");
+
     return (
-        <footer className="bg-[#002352] text-white pt-12 pb-5">
+        <footer className={`bg-[#002352] text-white pt-12 pb-5 ${isAdminPage ? "hidden" : "block"}`}>
             <div className="mx-auto max-w-6xl px-5">
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 mb-8">
                     <div>

@@ -1,6 +1,6 @@
 import { db } from "@/lib/prisma";
 
-export const getSubCategories = async (): Promise<{ id: string; name: string; category: { name: string } | null }[]> => { // Allow category to be null
+export const getSubCategories = async (): Promise<{ id: string; name: string; categoryId: string | null; category: { name: string } | null }[]> => { // Allow category to be null
     try {
         const subCategories = await db.subCategory.findMany({
             include: {
@@ -19,6 +19,7 @@ export const getSubCategories = async (): Promise<{ id: string; name: string; ca
             id: subCategory.id,
             name: subCategory.name,
             category: subCategory.category,
+            categoryId: subCategory.categoryId,
         }));
     } catch (error) {
         console.log("[GET_SUB_CATEGORIES: ", error);

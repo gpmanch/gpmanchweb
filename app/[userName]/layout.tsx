@@ -1,12 +1,11 @@
 import {Header} from "@/components/header";
 import { ReactNode } from "react";
-import Sidebar from "./_components/sidebar";
 import Footer from "@/components/footer";
 import CategoriesBar from "@/components/categories-bar";
 
 interface UserLayoutProps {
     children: ReactNode;
-    params: { userName: string }; // Ensure params is typed correctly
+    params: { userName: string };
 }
 
 const UserLayout = async ({
@@ -22,14 +21,9 @@ const UserLayout = async ({
             </div>
 
             <main className="pt-[108px] min-h-screen">
-                <div className="flex w-full">
-                    <aside className="hidden fixed h-full md:block w-56 shrink-0">
-                        <Sidebar userName={userName}/>
-                    </aside>
-                    <div className="w-full md:pl-56">
-                        {children}
-                        <Footer/>
-                    </div>
+                <div className="w-full">
+                    {children}
+                    <Footer/>
                 </div>
             </main>
         </div>

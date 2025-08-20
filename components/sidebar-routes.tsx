@@ -1,33 +1,8 @@
 "use client"
-import { BarChart, Compass, Layout, Layers3, Wrench, Receipt, Home, Settings } from "lucide-react"
-import { usePathname } from "next/navigation";
+import { BarChart, Layers3, Home, Settings, Verified } from "lucide-react"
 import { SidebarItem } from "./sidebar-item";
 
 export const SidebarRoutes = ({userName}:{userName: string}) => {
-    const pathname = usePathname()
-
-    const userRoutes = [
-        {
-            icon: Layout,
-            label: "My Courses",
-            href: "/dashboard",
-        },
-        {
-            icon: Compass,
-            label: "Explore",
-            href: "/dashboard/explore",
-        },
-        {
-            icon: Wrench,
-            label: "Workshops",
-            href: "/dashboard/workshops",
-        },
-        {
-            icon: Receipt,
-            label: "Payments",
-            href: "/dashboard/payments",
-        }
-    ]
 
     const adminRoutes = [
         {
@@ -46,19 +21,21 @@ export const SidebarRoutes = ({userName}:{userName: string}) => {
           href: `/${userName}/admin/sub-categories`,
         },
         {
+            icon: Verified,
+            label: "Verify",
+            href: `/${userName}/admin/verify`,
+        },
+        {
           icon: Settings,
           label: "Settings",
           href: `/${userName}/admin/settings`,
         },
     ]
-    const isAdminPage = pathname?.includes("/admin");
-
-    const routes = isAdminPage ? adminRoutes : userRoutes;
 
     return(
         <div className="flex flex-col w-full">
             {
-                routes.map((route) => (
+                adminRoutes.map((route) => (
                     <SidebarItem
                         key={route.href}
                         icon={route.icon}

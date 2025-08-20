@@ -6,7 +6,7 @@ export async function POST(
 ) {
     try {
         // const { userId } = auth();
-        const { title } = await req.json()
+        const { title, headingEn, headingHi, descriptionEn, descriptionHi } = await req.json()
 
         // if(!userId || !isTeacher(userId)) {
         //     return new NextResponse("Unauthorized request", { status: 401 })
@@ -22,15 +22,40 @@ export async function POST(
             return new NextResponse("Category already exists", { status: 400 });
         }
 
+        const categoryData = {
+            name: title,
+            heading: { en: headingEn, hi: headingHi },
+            description: { en: descriptionEn, hi: descriptionHi },
+        };
+
         const category = await db.category.create({
-            data: {
-                name: title,
-            }
+            data: categoryData
         })
 
         return NextResponse.json(category)
     } catch (error) {
         console.log("[CATEGORY]", error);
+        return new NextResponse("Internal Server Error", { status: 500 });
+    }
+}
+
+export async function GET() {
+    try {
+        const categories = await db.category.findMany({
+            select: {
+                id: true,
+                name: true,
+                heading: true,
+                description: true,
+            },
+            orderBy: {
+                name: "asc"
+            }
+        });
+
+        return NextResponse.json(categories);
+    } catch (error) {
+        console.log("[GET_CATEGORIES]", error);
         return new NextResponse("Internal Server Error", { status: 500 });
     }
 }

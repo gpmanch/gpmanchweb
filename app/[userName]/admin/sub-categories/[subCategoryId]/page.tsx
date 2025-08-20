@@ -2,15 +2,16 @@ import { db } from "@/lib/prisma";
 import { TitleForm } from "./_components/title-form";
 import { CategoryForm } from "./_components/category-form";
 import { IconBadge } from '@/components/icon-badge';
-import { LayoutDashboard } from "lucide-react";
+import { ArrowLeft, LayoutDashboard } from "lucide-react";
+import Link from "next/link";
 
 const EditSubCategoryPage = async({
     params
 }: {
-    params: Promise<{ subCategoryId: string }>
+    params: Promise<{ subCategoryId: string, userName: string }>
 }) => {
     const subCategoryId = (await params).subCategoryId;
-
+    const userName = (await params).userName;
     const subCategory = await db.subCategory.findUnique({
         where: { id: subCategoryId },
         include: { category: true },
@@ -24,10 +25,14 @@ const EditSubCategoryPage = async({
 
     return (
         <div className="p-6">
-            <h1 className="text-2xl font-medium mb-2">
-                Update Sub-Category
-            </h1>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-16">
+            <Link
+                href={`/${userName}/admin/sub-categories`}
+                className="flex items-center text-sm hover:opacity-75 transition mb-6"
+            >
+                <ArrowLeft className="h-4 w-4 mr-2" />
+                Back to sub-categories
+            </Link>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-10">
                 <div>
                     <div className="flex items-center gap-x-2">
                         <IconBadge icon={LayoutDashboard} />

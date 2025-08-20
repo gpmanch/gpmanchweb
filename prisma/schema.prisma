@@ -9,34 +9,79 @@ datasource db {
 }
 
 model User {
-  id              String           @id @default(auto()) @map("_id") @db.ObjectId
-  gpUserId  String?
-  userName String?
+  id           String   @id @default(auto()) @map("_id") @db.ObjectId
+  gpUserId     String?
+  userName     String?
   firstName    String
-  lastName    String?
-  email   String  @unique
-  phone   String?  @unique
-
-  avatar  String?
-
+  lastName     String?
+  email        String   @unique
+  phone        String?  @unique
+  avatar       String?
   refreshToken String?
-  isVerified Boolean @default(false)
-  isAdmin Boolean @default(false)
-  password String @unique
+  isVerified   Boolean  @default(false)
+  isAdmin      Boolean  @default(false)
+  password     String   @unique
+
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model Category {
+  id          String        @id @default(auto()) @map("_id") @db.ObjectId
+  name        String        @unique
+  heading     Json          @default("{}")
+  description Json          @default("{}")
+  subCategory SubCategory[]
+  persons     Person[]
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model SubCategory {
+  id         String     @id @default(auto()) @map("_id") @db.ObjectId
+  name       String
+  categoryId String?    @db.ObjectId
+  category   Category?  @relation(fields: [categoryId], references: [id])
+  persons    Person[]
+
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+model Gotr {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  nameHi    String
+  nameEn    String
+  isApproved Boolean  @default(false)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 
-model Category {
-  id     String   @id @default(auto()) @map("_id") @db.ObjectId
-  name   String   @unique
-  subCategory SubCategory[]
-}
+model Person {
+  id           String      @id @default(auto()) @map("_id") @db.ObjectId
+  nameHi       String
+  nameEn       String
+  description  Json?
+  imageUrl     String?
 
-model SubCategory {
-  id     String   @id @default(auto()) @map("_id") @db.ObjectId
-  name   String   @unique
-  categoryId String?   @db.ObjectId
-  category   Category? @relation(fields: [categoryId], references: [id])
+  categoryId   String     @db.ObjectId
+  category     Category   @relation(fields: [categoryId], references: [id])
+
+  subCategoryId String?     @db.ObjectId
+  subCategory   SubCategory? @relation(fields: [subCategoryId], references: [id])
+
+  // category-specific fields
+  award      String?   // for Award category
+  cadre      String?   // for Services
+  post       String?   // for Politicians
+  sport      String?   // for Sports
+  profession String?   // for Artists
+
+  order       Int       @default(0)
+  isApproved  Boolean   @default(false)
+
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
 }

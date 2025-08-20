@@ -1,11 +1,14 @@
 import { db } from "@/lib/prisma";
 
-export const getCategories = async (): Promise<{ id: string; name: string }[]> => {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const getCategories = async (): Promise<{ id: string; name: string; heading: any; description: any }[]> => {
     try {
         const categories = await db.category.findMany({
             select: {
                 name: true,
                 id: true,
+                heading: true,
+                description: true,
             },
             orderBy: {
                 name: "asc"

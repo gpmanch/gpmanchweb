@@ -15,30 +15,27 @@ import {
     FormItem,
     FormMessage
 } from "@/components/ui/form";
-import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { Pencil, Loader2 } from "lucide-react";
-import { Combobox } from "@/components/ui/combo-box";
 
-interface CategoryFormProps {
+interface TitleFormProps {
     initialData: {
-        categoryId: string;
+        name: string;
     };
-    subCategoryId: string;
-    options: { label: string; value: string; }[];
+    categoryId: string;
 }
 
 const formSchema = z.object({
-    categoryId: z.string().min(1, {
-        message: "Category is required",
+    name: z.string().min(1, {
+        message: "Name is required",
     }),
 });
 
-export const CategoryForm = ({
+export const TitleForm = ({
     initialData,
-    subCategoryId,
-    options,
-} : CategoryFormProps) => {
+    categoryId
+} : TitleFormProps) => {
     const router = useRouter()
     const [ isEditing, setIsEditing ] = useState(false)
 
@@ -46,16 +43,14 @@ export const CategoryForm = ({
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
-        defaultValues: {
-            categoryId: initialData?.categoryId || ""
-        }
+        defaultValues: initialData
     })
 
     const { isSubmitting, isValid } = form.formState;
     const onSubmit = async (values: z.infer<typeof formSchema>) => {
         try {
-            await axios.patch(`/api/sub-category/${subCategoryId}`, values)
-            toast.success("Sub-category updated!");
+            await axios.patch(`/api/category/${categoryId}`, values)
+            toast.success("Category updated!");
             toggleEdit()
             router.refresh()
         } catch (error) {
@@ -63,9 +58,6 @@ export const CategoryForm = ({
             console.log(error)
         }
     }
-
-    const selectedOption = options.find((option) => option.value === initialData.categoryId);
-
     return (
         <div className="relative mt-6 border bg-slate-100 rounded-md p-4">
             {
@@ -80,7 +72,7 @@ export const CategoryForm = ({
                 )
             }
             <div className="font-medium flex items-center justify-between">
-                Category
+                Category Title
                 <Button onClick={toggleEdit} variant="ghost">
                     {
                         isEditing ? (
@@ -90,7 +82,7 @@ export const CategoryForm = ({
                         ) : (
                             <>
                                 <Pencil className="h-4 w-4 mr-2" />
-                                Edit Category
+                                Edit title
                             </>
                         )
                     }
@@ -98,11 +90,8 @@ export const CategoryForm = ({
             </div>
             {
                 !isEditing ? (
-                    <p className={cn(
-                        "text-sm mt-2",
-                        !initialData.categoryId && "text-slate-500 italic"
-                    )}>
-                        {selectedOption?.label || "No Category"}
+                    <p className="text-sm mt-2">
+                        {initialData.name}
                     </p>
                 ) : (
                     <Form {...form}>
@@ -112,12 +101,13 @@ export const CategoryForm = ({
                         >
                             <FormField
                                 control={form.control}
-                                name="categoryId"
+                                name="name"
                                 render={({field}) => (
                                     <FormItem>
                                         <FormControl>
-                                            <Combobox
-                                                options={options}
+                                            <Input
+                                                disabled={isSubmitting}
+                                                placeholder="e.g. 'Award', 'Sports', 'Music'"
                                                 {...field}
                                             />
                                         </FormControl>
@@ -139,7 +129,7 @@ export const CategoryForm = ({
             }
 
             {
-                !initialData.categoryId && (
+                !initialData.name && (
                     <span className="text-sm text-red-600">This field is required.</span>
                 )
             }
