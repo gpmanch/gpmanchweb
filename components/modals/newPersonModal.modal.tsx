@@ -68,12 +68,14 @@ interface NewPersonModalProps {
   onClose: () => void;
   isOpen: boolean;
   categories: Category[];
+  activeCategoryId: string;
 }
 
 export const NewPersonModal = ({
   onClose,
   isOpen,
   categories,
+  activeCategoryId,
 }: NewPersonModalProps) => {
   const router = useRouter();
 
@@ -87,7 +89,7 @@ export const NewPersonModal = ({
       descHi: "",
       descEn: "",
       imageUrl: "",
-      categoryId: categories[0]?.id || "",
+      categoryId: activeCategoryId,
       subCategoryId: "",
       award: "",
       cadre: "",
@@ -106,13 +108,19 @@ export const NewPersonModal = ({
   } = form;
 
   const currentImg = watch("imageUrl");
+  const currentCategory = categories.find(cat => cat.id === activeCategoryId);
+  const subCategories = currentCategory?.subCategories ?? [];
+  console.log()
 
   useEffect(() => {
-    const id = categories[0]?.id || "";
-    if (id) {
-      form.setValue("categoryId", id, { shouldValidate: true, shouldDirty: true });
+    if (isOpen) {
+      form.reset({
+        ...form.getValues(),
+        categoryId: activeCategoryId,
+        subCategoryId: "",
+      });
     }
-  }, [categories, form]);
+  }, [activeCategoryId, form, isOpen]);
 
   // ✅ Submit handler
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
@@ -127,9 +135,6 @@ export const NewPersonModal = ({
       console.error("Error adding person:", error);
     }
   };
-
-  const currentCategory = categories[0];
-  const subCategories = currentCategory?.subCategories ?? [];
 
   return (
     <AlertDialog open={isOpen} onOpenChange={(open) => !open && onClose()}>

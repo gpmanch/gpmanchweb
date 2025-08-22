@@ -9,33 +9,14 @@ export async function PATCH(
     const body = await req.json();
     const { personId } = await context.params;
 
-    const updatedPerson = await db.person.update({
+    const updated = await db.person.update({
       where: { id: personId },
-      data: {
-        nameHi: body.nameHi,
-        nameEn: body.nameEn,
-        description: {
-          hi: body.descHi || "",
-          en: body.descEn || "",
-        },
-        imageUrl: body.imageUrl,
-        categoryId: body.categoryId,
-        subCategoryId: body.subCategoryId,
-        award: body.award,
-        cadre: body.cadre,
-        post: body.post,
-        sport: body.sport,
-        profession: body.profession,
-        isApproved: true,
-      },
+      data: body,
     });
 
-    return NextResponse.json(updatedPerson);
+    return NextResponse.json(updated, { status: 200 });
   } catch (error) {
-    console.error("PATCH /api/person/[personId] error:", error);
-    return NextResponse.json(
-      { error: "Failed to update person" },
-      { status: 500 }
-    );
+    console.error("[PERSON_PATCH]", error);
+    return new NextResponse("Internal Server Error", { status: 500 });
   }
 }

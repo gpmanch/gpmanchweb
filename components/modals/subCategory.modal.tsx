@@ -37,7 +37,7 @@ interface NewSubCategoryModalProps {
 export const NewSubCategoryModal = ({ onClose, isOpen }: NewSubCategoryModalProps) => {
   const router = useRouter();
   const [categories, setCategories] = useState<{ label: string; value: string; }[]>([]);
-  
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -59,7 +59,7 @@ export const NewSubCategoryModal = ({ onClose, isOpen }: NewSubCategoryModalProp
         console.error("Error fetching categories:", error);
       }
     };
-    
+
     if (isOpen) {
       fetchCategories();
     }

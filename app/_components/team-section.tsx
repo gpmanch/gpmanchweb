@@ -45,7 +45,11 @@ export default function TeamSection() {
                   alt="Team Member"
                   width={200}
                   height={200}
-                  className="w-[200px] h-[200px] rounded-full object-cover border-[5px] border-[#FFCA3C] mb-5 mx-auto"
+                  className="w-32 h-32 rounded-full mx-auto mb-4 object-cover"
+                  sizes="(max-width: 768px) 128px, 128px"
+                  placeholder="blur"
+                  blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAIAAoDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAhEAACAQMDBQAAAAAAAAAAAAABAgMABAUGIWGRkqGx0f/EABUBAQEAAAAAAAAAAAAAAAAAAAMF/8QAGhEAAgIDAAAAAAAAAAAAAAAAAAECEgMRkf/aAAwDAQACEQMRAD8AltJagyeH0AthI5xdrLcNM91BF5pX2HaH9bcfaSXWGaRmknyJckliyjqTzSlT54b6bk+h0R//2Q=="
+                  priority={idx < 2}
                 />
                 <h3 className="text-xl font-semibold text-[#002352] mb-1">{isHindi ? member.nameHi : member.nameEn }</h3>
                 <p className="italic text-[#666666]">{isHindi ? member.desgHi : member.desgEn }</p>

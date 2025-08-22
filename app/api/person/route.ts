@@ -28,39 +28,11 @@ export async function POST(req: Request) {
       { message: "Person added successfully", person: newPerson },
       { status: 201 }
     );
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("POST /api/person error:", error);
     return NextResponse.json(
-      { error: error.message || "Failed to add person" },
+      { error: error instanceof Error ? error.message : "Failed to add person" },
       { status: 400 }
-    );
-  }
-}
-
-export async function GET(req: Request) {
-  try {
-    const { searchParams } = new URL(req.url);
-    const categoryId = searchParams.get("categoryId");
-
-    const persons = await db.person.findMany({
-      where: {
-        isApproved: true,
-        ...(categoryId ? { categoryId } : {}),
-      },
-      include: {
-        category: true,
-        subCategory: true,
-      },
-      orderBy: { createdAt: "desc" },
-    });
-
-    return NextResponse.json(persons, { status: 200 });
-  } catch (error: unknown) {
-    console.error("GET /api/person error:", error);
-    return NextResponse.json(
-      { error: "Failed to fetch persons" },
-      { status: 500 }
     );
   }
 }

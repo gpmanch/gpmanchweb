@@ -1,23 +1,23 @@
 import { db } from "@/lib/prisma";
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const getCategories = async (): Promise<{ id: string; name: string; heading: any; description: any }[]> => {
-    try {
-        const categories = await db.category.findMany({
-            select: {
-                name: true,
-                id: true,
-                heading: true,
-                description: true,
-            },
-            orderBy: {
-                name: "asc"
-            }
-        })
+export const getCategories = async () => {
+  const categories = await db.category.findMany({
+    select: {
+      id: true,
+      name: true,
+      heading: true,
+      description: true,
+      subCategory: {
+        select: {
+          id: true,
+          name: true,
+        },
+      },
+    },
+    orderBy: {
+      name: "asc",
+    },
+  });
 
-        return categories;
-    } catch (error) {
-        console.log("[GET_CATEGORIES: ", error);
-        return [];
-    }
-}
+  return categories;
+};

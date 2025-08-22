@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { ConfirmModal } from "@/components/modals/confirm.modal";
 import { useRouter } from "next/navigation";
 import { useParams } from "next/navigation";
+import { JsonValue } from "@prisma/client/runtime/library";
 
 const CategoryActions = ({ id }: { id: string }) => {
     const router = useRouter();
@@ -43,7 +44,7 @@ const CategoryActions = ({ id }: { id: string }) => {
     );
 };
 
-export const columns: ColumnDef<{ id: string; name: string; heading: string; description: string; }>[] = [
+export const columns: ColumnDef<{ id: string; name: string; heading: JsonValue; description: JsonValue; }>[] = [
     {
         accessorKey: "name",
         header: ({ column }) => (

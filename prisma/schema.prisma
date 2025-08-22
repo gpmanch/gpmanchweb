@@ -24,6 +24,11 @@ model User {
 
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
+
+  @@index([isVerified])
+  @@index([isAdmin])
+  @@index([userName])
+  @@index([createdAt])
 }
 
 model Category {
@@ -36,6 +41,8 @@ model Category {
 
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+
+  @@index([createdAt])
 }
 
 model SubCategory {
@@ -47,6 +54,10 @@ model SubCategory {
 
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
+
+  @@index([categoryId])
+  @@index([categoryId, name])
+  @@index([createdAt])
 }
 
 model Gotr {
@@ -57,6 +68,13 @@ model Gotr {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  @@index([isApproved])
+  @@index([nameEn])
+  @@index([nameHi])
+  @@index([isApproved, nameEn])
+  @@index([isApproved, nameHi])
+  @@index([createdAt])
 }
 
 model Person {
@@ -84,4 +102,17 @@ model Person {
 
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
+
+  @@index([categoryId])
+  @@index([subCategoryId])
+  @@index([isApproved])
+  @@index([order])
+  @@index([createdAt])
+  @@index([categoryId, isApproved])
+  @@index([subCategoryId, isApproved])
+  @@index([isApproved, createdAt])
+  @@index([categoryId, isApproved, order])
+  @@index([subCategoryId, isApproved, order])
+  @@index([nameEn])
+  @@index([nameHi])
 }

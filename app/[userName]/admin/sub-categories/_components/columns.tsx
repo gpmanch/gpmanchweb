@@ -3,12 +3,19 @@
 import Link from "next/link";
 import axios from "axios";
 import toast from "react-hot-toast";
-import { SubCategory } from "@prisma/client";
 import { ColumnDef } from "@tanstack/react-table";
 import { ArrowUpDown, Trash, Pencil } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ConfirmModal } from "@/components/modals/confirm.modal";
 import { useParams, useRouter } from "next/navigation";
+
+export type SubCategoryWithCategory = {
+  id: string;
+  name: string;
+  category: {
+    name: string;
+  } | null;
+};
 
 const CategoryActions = ({ id }: { id: string }) => {
   const router = useRouter();
@@ -43,7 +50,7 @@ const CategoryActions = ({ id }: { id: string }) => {
   );
 };
 
-export const columns: ColumnDef<SubCategory & { category: { name: string } | null }>[] = [
+export const columns: ColumnDef<SubCategoryWithCategory>[] = [
   {
     accessorKey: "name",
     header: ({ column }) => (

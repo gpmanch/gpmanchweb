@@ -1,5 +1,5 @@
-import { ReactNode } from "react";
-import Sidebar from "@/components/sidebar";
+import Sidebar from '@/components/sidebar';
+import React, { ReactNode } from 'react'
 
 interface AdminLayoutProps {
   children: ReactNode;
@@ -9,19 +9,17 @@ interface AdminLayoutProps {
 const AdminLayout = async({
     children,
     params
-  } : AdminLayoutProps
-) => {
-  const { userName } = await params;
-  return  (
-      <div className="flex w-full">
+}: AdminLayoutProps) => {
+    return (
+        <div className="flex w-full">
         <aside className="hidden fixed h-full md:block w-56 shrink-0">
-          <Sidebar userName={userName}/>
+          <Sidebar userName={(await params).userName}/>
         </aside>
       <div className="w-full md:pl-56">
         {children}
       </div>
     </div>
-  )
-};
+    )
+}
 
-export default AdminLayout;
+export default AdminLayout

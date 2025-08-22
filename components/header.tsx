@@ -67,7 +67,7 @@ export const Header = () => {
                 {/* Logo */}
                 <div className="flex items-center">
                     <Link href="/" className="flex items-center">
-                        <Image src="/logo-b.png" alt="Gurjar Pragati Manch Logo" width={54} height={54} className="h-[54px] w-auto rounded-[10px] shadow-[0_2px_8px_rgba(0,0,0,0.04)]" />
+                        <Image src="/logo-b.png" alt="Gurjar Pragati Manch Logo" width={54} height={54} className="h-[54px] w-auto rounded-[10px] shadow-[0_2px_8px_rgba(0,0,0,0.04)]" priority={true} />
                     </Link>
                 </div>
 

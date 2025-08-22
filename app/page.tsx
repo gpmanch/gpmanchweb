@@ -1,4 +1,5 @@
 // import Header from "@/components/header";
+import { Header } from "@/components/header";
 import AboutSection from "./_components/about-section";
 import ContactSection from "./_components/contact-section";
 import HeroSection from "./_components/hero-section";
@@ -9,11 +10,11 @@ import TeamSection from "./_components/team-section";
 import YouthEmpowerment from "./_components/youth-empowerment";
 import Footer from "@/components/footer";
 
-
 export default function Home() {
   return (
     <>
       {/* <Header/> */}
+      <Header/>
 
       {/* Hero Section */}
       <HeroSection/>

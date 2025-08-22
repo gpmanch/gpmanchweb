@@ -1,8 +1,8 @@
+import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/prisma";
-import { NextResponse } from "next/server"
 
 export async function POST(
-    req: Request,
+    req: NextRequest,
 ) {
     try {
         // const { userId } = auth();
@@ -31,18 +31,7 @@ export async function POST(
 
         return NextResponse.json(category)
     } catch (error) {
-        console.log("[SUB_CATEGORY]", error);
+        console.error("[SUB_CATEGORY]", error);
         return new NextResponse("Internal Server Error", { status: 500 });
     }
 }
-
-export async function GET() {
-    try {
-      // Example fetch from DB
-      const subs = await db.subCategory.findMany();
-      return NextResponse.json(subs);
-    } catch (error) {
-      console.error("Error fetching sub-categories:", error);
-      return NextResponse.json({ error: "Failed to fetch sub-categories" }, { status: 500 });
-    }
-  }

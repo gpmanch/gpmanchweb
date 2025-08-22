@@ -8,16 +8,15 @@ import { DescriptionForm } from "./_components/description-form";
 import { ArrowLeft, LayoutDashboard } from "lucide-react";
 
 
-const EditCategoryPage = async({
+const Page = async ({
     params
 }: {
     params: Promise<{ categoryId: string, userName: string }>
 }) => {
-    const { categoryId } = await params;
-    const userName = (await params).userName;
+    const { categoryId, userName } = await params;
     const category = await db.category.findUnique({
         where: { id: categoryId },
-        include: { subCategory: true },
+        select: { id: true, name: true, heading: true, description: true }
     });
 
     const headingObj = {
@@ -64,4 +63,4 @@ const EditCategoryPage = async({
     );
 }
 
-export default EditCategoryPage;
+export default Page;

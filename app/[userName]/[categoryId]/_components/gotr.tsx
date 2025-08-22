@@ -1,11 +1,13 @@
+"use client";
+
 import { useLanguage } from '@/components/language';
-import React, { useMemo, useState, useEffect } from 'react';
+import React, { useMemo, useState } from 'react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { NewGotrModal } from '@/components/modals/newGotrModal.modal';
 
 interface GotrProps {
-  categoryId: string;
+  gotras: GotrItem[];
 }
 
 interface GotrItem {
@@ -14,32 +16,10 @@ interface GotrItem {
   nameEn: string;
 }
 
-const Gotr: React.FC<GotrProps> = ({ categoryId }) => {
+const Gotr: React.FC<GotrProps> = ({ gotras }) => {
   const { isHindi } = useLanguage();
   const [query, setQuery] = useState<string>('');
-  const [gotras, setGotras] = useState<GotrItem[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
   const [showNewGotrModal, setShowNewGotrModal] = useState(false);
-
-  useEffect(() => {
-    let isMounted = true;
-    async function fetchGotras() {
-      try {
-        const res = await fetch('/api/gotr');
-        if (!res.ok) throw new Error('Failed to fetch gotras');
-        const data: GotrItem[] = await res.json();
-        if (isMounted) setGotras(data);
-      } catch (e) {
-        console.error(e);
-      } finally {
-        if (isMounted) setLoading(false);
-      }
-    }
-    fetchGotras();
-    return () => {
-      isMounted = false;
-    };
-  }, [categoryId]);
 
   // Unique + sorted list
   const gotraList: string[] = useMemo(() => {
@@ -83,7 +63,7 @@ const Gotr: React.FC<GotrProps> = ({ categoryId }) => {
 
       {/* Gotra List */}
       <div className="bg-white rounded-xl border shadow-sm p-4 sm:p-6">
-        {loading ? (
+        {gotras.length === 0 ? (
           <div className="text-center text-slate-500 py-8">
             {isHindi ? 'लोड हो रहा है...' : 'Loading...'}
           </div>

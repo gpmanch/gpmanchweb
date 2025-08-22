@@ -3,6 +3,7 @@ import { cookies, headers } from "next/headers";
 
 function getSecret(envVarName: string, devFallback?: string): Secret {
     const value = process.env[envVarName] ?? (process.env.NODE_ENV !== "production" ? devFallback : undefined);
+
     if (!value) {
         throw new Error(`${envVarName} is not set`);
     }
@@ -25,8 +26,7 @@ export async function getCurrentUserId(): Promise<string | null> {
 
     try {
         const payload = jwt.verify(token, getSecret("ACCESS_SECRET", "dev-access-secret"));
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        return typeof payload === "object" && payload && "id" in payload ? (payload as any).id : null;
+        return typeof payload === "object" && payload && "id" in payload ? (payload as { id: string }).id : null;
     } catch {
         return null;
     }
