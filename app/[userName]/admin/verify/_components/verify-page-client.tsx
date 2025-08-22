@@ -5,10 +5,15 @@ import PersonCard from "./person-card";
 import { ApprovePersonModal } from "@/components/modals/approvePerson.modal";
 import { ApproveGotrModal } from "@/components/modals/approveGotr.modal";
 
+interface SubCategory {
+  id: string;
+  name: string;
+}
+
 interface Category {
   id: string;
   name: string;
-  subCategory?: { id: string; name: string }[];
+  subCategory?: SubCategory[];
 }
 
 interface Person {
@@ -125,8 +130,8 @@ const VerifyPageClient: React.FC<VerifyPageClientProps> = ({ categories, persons
             setIsModalOpen(false);
             setSelectedPerson(null);
           }}
-          categories={categories}
           person={selectedPerson}
+          currentCategory={categories.find(cat => cat.id === selectedPerson.categoryId)}
         />
       )}
       {selectedGotr && (

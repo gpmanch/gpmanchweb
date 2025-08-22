@@ -48,7 +48,7 @@ interface SubCategory {
 interface Category {
   id: string;
   name: string;
-  subCategories?: SubCategory[];
+  subCategory?: SubCategory[];
 }
 
 interface Person {
@@ -73,14 +73,14 @@ interface ApprovePersonModalProps {
   person: Person | null;
   onClose: () => void;
   isOpen: boolean;
-  categories: Category[];
+  currentCategory: Category | undefined;
 }
 
 export const ApprovePersonModal = ({
   person,
   onClose,
   isOpen,
-  categories,
+  currentCategory,
 }: ApprovePersonModalProps) => {
   const router = useRouter();
 
@@ -94,7 +94,7 @@ export const ApprovePersonModal = ({
       descHi: "",
       descEn: "",
       imageUrl: "",
-      categoryId: categories[0]?.id || "",
+      categoryId: currentCategory?.id || "",
       subCategoryId: "",
       award: "",
       cadre: "",
@@ -132,7 +132,7 @@ export const ApprovePersonModal = ({
         profession: person.profession || "",
       });
     }
-  }, [person, reset]);
+  }, [person, reset, currentCategory]);
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     if (!person) return;
@@ -150,10 +150,8 @@ export const ApprovePersonModal = ({
     }
   };
 
-  const currentCategory =
-    categories.find((c) => c.id === form.getValues("categoryId")) ||
-    categories[0];
-  const subCategories = currentCategory?.subCategories ?? [];
+  const subCategories = currentCategory?.subCategory ?? [];
+  console.log(subCategories)
 
   return (
     <AlertDialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
