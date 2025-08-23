@@ -15,7 +15,7 @@ model User {
   firstName    String
   lastName     String?
   email        String   @unique
-  phone        String?  @unique
+  phone        String?
   avatar       String?
   refreshToken String?
   isVerified   Boolean  @default(false)
@@ -115,4 +115,13 @@ model Person {
   @@index([subCategoryId, isApproved, order])
   @@index([nameEn])
   @@index([nameHi])
+}
+
+model Otp {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  email     String
+  otp       String
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+  used      Boolean  @default(false)
 }

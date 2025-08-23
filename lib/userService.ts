@@ -1,8 +1,7 @@
 import bcrypt from "bcrypt";
-import jwt from "jsonwebtoken";
-import type { SignOptions, Secret } from "jsonwebtoken";
 import { db } from "@/lib/prisma";
 import { User, Prisma } from "@prisma/client";
+import { generateAccessToken as jwtGenerateAccessToken, generateRefreshToken as jwtGenerateRefreshToken, type TokenPayload } from "@/lib/jwt";
 
 interface CreateUserInput {
     email: string;
@@ -13,19 +12,6 @@ interface CreateUserInput {
     phone?: string;
     avatar?: string;
 }
-
-function getSecret(envVarName: string, devFallback?: string): Secret {
-    const value = process.env[envVarName] ?? (process.env.NODE_ENV !== "production" ? devFallback : undefined);
-    if (!value) {
-        throw new Error(`${envVarName} is not set`);
-    }
-    return value as Secret;
-}
-
-const ACCESS_SECRET: Secret = getSecret("ACCESS_SECRET", "dev-access-secret");
-const ACCESS_EXPIRES_IN = (process.env.ACCESS_EXPIRES_IN ?? "15m") as unknown as SignOptions["expiresIn"];
-const REFRESH_SECRET: Secret = getSecret("REFRESH_SECRET", "dev-refresh-secret");
-const REFRESH_EXPIRES_IN = (process.env. REFRESH_EXPIRES_IN ?? "7d") as unknown as SignOptions["expiresIn"];
 
 export async function createUser(data: CreateUserInput): Promise<User> {
     const hashedPassword = await bcrypt.hash(data.password, 10);
@@ -65,25 +51,19 @@ export async function isPasswordCorrect(userId: string, password: string): Promi
 }
 
 export function generateAccessToken(user: User): string {
-    return jwt.sign(
-        {
-        id: user.id,
+    const payload: TokenPayload = {
+        userId: user.id,
         email: user.email,
-        userName: user.userName,
-        firstName: user.firstName,
-        lastName: user.lastName ?? undefined,
+        userName: user.userName ?? undefined,
         isAdmin: user.isAdmin,
-        isVerified: user.isVerified,
-        },
-        ACCESS_SECRET,
-        { expiresIn: ACCESS_EXPIRES_IN }
-    );
+    };
+    return jwtGenerateAccessToken(payload);
 }
 
 export function generateRefreshToken(user: User): string {
-    return jwt.sign(
-        { id: user.id },
-        REFRESH_SECRET,
-        { expiresIn: REFRESH_EXPIRES_IN }
-    );
+    const payload: TokenPayload = {
+        userId: user.id,
+        email: user.email,
+    };
+    return jwtGenerateRefreshToken(payload);
 }

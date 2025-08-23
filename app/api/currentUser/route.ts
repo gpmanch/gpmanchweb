@@ -1,9 +1,15 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/prisma";
-import { getCurrentUserId } from "@/lib/auth";
+import { getCurrentUserFromHeaders } from "@/lib/auth";
 
 export async function GET() {
-  const userId = await getCurrentUserId();
+  const currentUser = await getCurrentUserFromHeaders();
+
+  if (!currentUser) {
+    return NextResponse.json({ message: "Not authenticated" }, { status: 401 });
+  }
+
+  const userId = currentUser.userId;
 
   if (!userId) {
     return NextResponse.json({ message: "Not authenticated" }, { status: 401 });

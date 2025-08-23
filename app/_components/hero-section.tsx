@@ -5,7 +5,7 @@ export default function HeroSection() {
     const { isHindi } = useLanguage();
     return (
         <section
-            className="relative mt-[70px] h-screen bg-[linear-gradient(rgba(0,35,82,0.7),rgba(0,35,82,0.7)),url('https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1200&q=80')] bg-cover bg-center flex items-center text-white"
+            className="relative h-screen bg-[linear-gradient(rgba(0,35,82,0.7),rgba(0,35,82,0.7)),url('https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1200&q=80')] bg-cover bg-center flex items-center text-white"
         >
             <div className="max-w-[800px] mx-auto px-5 text-center">
                 <h1 className="text-5xl font-bold mb-5">{isHindi ? "गौरवशाली इतिहास से प्रेरित, प्रगति की ओर एक कदम" : "Inspired by Glorious History, A Step Towards Progress"}</h1>

@@ -1,32 +1,44 @@
-import jwt, { type Secret } from "jsonwebtoken";
-import { cookies, headers } from "next/headers";
+import { headers } from "next/headers";
+import { verifyAccessToken, type TokenPayload } from "@/lib/jwt";
 
-function getSecret(envVarName: string, devFallback?: string): Secret {
-    const value = process.env[envVarName] ?? (process.env.NODE_ENV !== "production" ? devFallback : undefined);
+export { type TokenPayload } from "@/lib/jwt";
 
-    if (!value) {
-        throw new Error(`${envVarName} is not set`);
+// Server-side utility to get current user from request headers
+export async function getCurrentUserFromHeaders(): Promise<TokenPayload | null> {
+    try {
+        const headersList = await headers();
+        const authHeader = headersList.get('authorization');
+
+        if (!authHeader || !authHeader.startsWith('Bearer ')) {
+            return null;
+        }
+
+        const token = authHeader.substring(7);
+        return verifyAccessToken(token);
+    } catch {
+        return null;
     }
-    return value as Secret;
 }
 
+// Server-side utility to check if user is admin from request headers
+export async function isUserAdminFromHeaders(): Promise<boolean> {
+    const user = await getCurrentUserFromHeaders();
+    return user?.isAdmin === true;
+}
+
+// Server action utility to get current user ID from cookies
 export async function getCurrentUserId(): Promise<string | null> {
-    const h = await headers();
-    const auth = h.get("authorization");
-    let token: string | undefined;
-
-    if (auth && auth.startsWith("Bearer ")) {
-        token = auth.slice(7);
-    }
-    if (!token) {
-        const c = await cookies();
-        token = c.get("accessToken")?.value;
-    }
-    if (!token) return null;
-
     try {
-        const payload = jwt.verify(token, getSecret("ACCESS_SECRET", "dev-access-secret"));
-        return typeof payload === "object" && payload && "id" in payload ? (payload as { id: string }).id : null;
+        const { cookies } = await import('next/headers');
+        const cookieStore = await cookies();
+        const token = cookieStore.get('accessToken')?.value;
+
+        if (!token) {
+            return null;
+        }
+
+        const payload = verifyAccessToken(token);
+        return payload?.userId || null;
     } catch {
         return null;
     }

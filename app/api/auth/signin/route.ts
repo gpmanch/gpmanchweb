@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
+import bcrypt from "bcrypt";
 import { db } from "@/lib/prisma";
-import { isPasswordCorrect, generateAccessToken, generateRefreshToken } from "@/lib/userService";
+import { generateAccessToken, generateRefreshToken, TokenPayload } from "@/lib/jwt";
 
 export async function POST(req: Request) {
   try {
@@ -19,42 +20,39 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Invalid email" }, { status: 401 });
     }
 
-    // Use helper to check password
-    const valid = await isPasswordCorrect(user.id, password);
-    if (!valid) {
+    // Check password
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+    if (!isPasswordValid) {
       return NextResponse.json({ error: "Invalid password" }, { status: 401 });
     }
 
-    // Generate JWTs
-    const accessToken = generateAccessToken(user);
-    const refreshToken = generateRefreshToken(user);
+    // Generate tokens
+    const tokenPayload: TokenPayload = {
+      userId: user.id,
+      email: user.email,
+      userName: user.userName || undefined,
+      isAdmin: user.isAdmin,
+    };
 
-    // Persist refresh token
-    await db.user.update({ where: { id: user.id }, data: { refreshToken } });
+    const accessToken = generateAccessToken(tokenPayload);
+    const refreshToken = generateRefreshToken(tokenPayload);
 
-    // Prepare response with httpOnly cookies
-    const res = NextResponse.json({
+    // Create response with access token
+    const response = NextResponse.json({
       message: "Sign-in successful",
-      user: { id: user.id, email: user.email, userName: user.userName },
+      user: { id: user.id, email: user.email, userName: user.userName, isAdmin: user.isAdmin },
+      accessToken,
     });
 
-    const isProd = process.env.NODE_ENV === "production";
-    res.cookies.set("accessToken", accessToken, {
+    // Set refresh token as httpOnly cookie
+    response.cookies.set('refreshToken', refreshToken, {
       httpOnly: true,
-      secure: isProd,
-      sameSite: "lax",
-      path: "/",
-      maxAge: 60 * 15, // 15 minutes
-    });
-    res.cookies.set("refreshToken", refreshToken, {
-      httpOnly: true,
-      secure: isProd,
-      sameSite: "lax",
-      path: "/",
-      maxAge: 60 * 60 * 24 * 7, // 7 days
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict',
+      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
     });
 
-    return res;
+    return response;
   } catch (error) {
     console.error("Sign-in error:", error);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });

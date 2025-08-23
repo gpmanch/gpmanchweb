@@ -1,10 +1,10 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { isAdminByEmail } from "@/actions/isAdmin";
 import Link from "next/link";
+import { setLocalStorageItem } from "@/lib/auth-client";
 
 export default function SignInForm() {
   const router = useRouter();
@@ -12,11 +12,27 @@ export default function SignInForm() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [redirectPath, setRedirectPath] = useState<string | null>(null);
+
+  // Handle redirect after successful signin
+  useEffect(() => {
+    if (redirectPath) {
+      try {
+        router.push(redirectPath);
+      } catch (error) {
+        console.error("router.push failed:", error);
+        if (typeof window !== 'undefined') {
+          window.location.href = redirectPath;
+        }
+      }
+    }
+  }, [redirectPath, router]);
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setLoading(true);
     setError("");
+    setRedirectPath(null);
 
     try {
       const response = await fetch("/api/auth/signin", {
@@ -28,17 +44,44 @@ export default function SignInForm() {
       });
 
       const data = await response.json();
+
       if (response.ok) {
-        if(await isAdminByEmail(data.user.email)){
-          router.push( `/admin`);
-        } else {
-          router.push(`/${data.user?.userName}`);
+        if (data.accessToken) {
+          setLocalStorageItem('accessToken', data.accessToken);
         }
+
+        const path = data.user?.isAdmin
+          ? `/${data.user.userName}/admin`
+          : `/${data.user?.userName}`;
+
+        if (!path || path === '/undefined' || path === '/null') {
+          console.error("Invalid redirect path:", path);
+          setError("Invalid user data received. Please try again.");
+          return;
+        }
+
+        setRedirectPath(path);
+
+        if (data.user?.isAdmin) {
+
+          setTimeout(() => {
+            const regularPath = `/${data.user.userName}`;
+            if (typeof window !== 'undefined') {
+              window.location.href = regularPath;
+            }
+          }, 1000);
+        }
+
+        setTimeout(() => {
+          if (typeof window !== 'undefined') {
+            window.location.href = path;
+          }
+        }, 500);
       } else {
-        setError(data.message || "Login failed. Please try again.");
+        setError(data.error || data.message || "Login failed. Please try again.");
       }
     } catch (err) {
-      console.error(err);
+      console.error("Signin error:", err);
       setError("An error occurred. Please try again later.");
     } finally {
       setLoading(false);
@@ -151,5 +194,3 @@ export default function SignInForm() {
     </form>
   );
 }
-
-
