@@ -5,6 +5,8 @@ const mailjetClient = mailjet.apiConnect(
   process.env.MAILJET_API_SECRET!
 );
 
+
+
 interface MailjetMessage {
   From: { Email: string; Name: string };
   To: Array<{ Email: string }>;
@@ -18,7 +20,11 @@ interface MailjetMessage {
 
 export async function sendOtpEmail(to: string, otp: string) {
   const fromEmail = process.env.MAILJET_SENDER_EMAIL!;
-  const templateId = process.env.MAILJET_OTP_TEMPLATE_ID;
+  const templateId = process.env.MAILJET_AUTH_TEMPLATE_ID;
+
+  if (!templateId) {
+    throw new Error('MAILJET_OTP_TEMPLATE_ID environment variable is required');
+  }
 
   try {
     const messageData: MailjetMessage = {
@@ -31,16 +37,12 @@ export async function sendOtpEmail(to: string, otp: string) {
           Email: to,
         },
       ],
-    };
-
-    // Use Mailjet template if template ID is provided
-    if (templateId) {
-      messageData.TemplateID = parseInt(templateId);
-      messageData.TemplateLanguage = true;
-      messageData.Variables = {
+      TemplateID: parseInt(templateId),
+      TemplateLanguage: true,
+      Variables: {
         otp: otp
-      };
-    }
+      },
+    };
 
     const result = await mailjetClient.post('send', { version: 'v3.1' }).request({
       Messages: [messageData],
