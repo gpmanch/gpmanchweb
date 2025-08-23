@@ -5,9 +5,11 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { setLocalStorageItem } from "@/lib/auth-client";
+import { useAuth } from "@/components/context/auth-context";
 
 export default function SignInForm() {
   const router = useRouter();
+  const { refreshAuth } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -50,6 +52,9 @@ export default function SignInForm() {
           setLocalStorageItem('accessToken', data.accessToken);
         }
 
+        // Refresh auth state to update header
+        refreshAuth();
+
         const path = data.user?.isAdmin
           ? `/${data.user.userName}/admin`
           : `/${data.user?.userName}`;
@@ -61,22 +66,6 @@ export default function SignInForm() {
         }
 
         setRedirectPath(path);
-
-        if (data.user?.isAdmin) {
-
-          setTimeout(() => {
-            const regularPath = `/${data.user.userName}`;
-            if (typeof window !== 'undefined') {
-              window.location.href = regularPath;
-            }
-          }, 1000);
-        }
-
-        setTimeout(() => {
-          if (typeof window !== 'undefined') {
-            window.location.href = path;
-          }
-        }, 500);
       } else {
         setError(data.error || data.message || "Login failed. Please try again.");
       }

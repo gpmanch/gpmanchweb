@@ -3,12 +3,12 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Button } from '@/components/ui/button';
-import { isUserAdmin, getCurrentUser } from '@/lib/auth-client';
+import { useAuth } from '@/components/context/auth-context';
 
 export const NavbarRoutes = () => {
     const pathname = usePathname();
-    const currentUser = getCurrentUser();
-    const isAdmin = isUserAdmin();
+    const { user: currentUser } = useAuth();
+    const isAdmin = currentUser?.isAdmin;
     const isAdminPage = pathname?.includes("/admin");
 
     return (

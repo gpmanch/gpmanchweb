@@ -2,7 +2,7 @@
 import Sidebar from '@/components/sidebar';
 import React, { ReactNode, useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation';
-import { isUserAdmin, getCurrentUser } from '@/lib/auth-client';
+import { useAuth } from '@/components/context/auth-context';
 
 interface AdminLayoutProps {
   children: ReactNode;
@@ -13,13 +13,11 @@ const AdminLayout = ({ children, params }: AdminLayoutProps) => {
   const router = useRouter();
   const { userName } = React.use(params);
   const [isLoading, setIsLoading] = useState(true);
+  const { user: currentUser, isLoggedIn } = useAuth();
 
   useEffect(() => {
     const checkAuth = () => {
-      const currentUser = getCurrentUser();
-      const isAdmin = isUserAdmin();
-
-      if (!isAdmin) {
+      if (!currentUser?.isAdmin) {
         console.log("User is not admin, redirecting to sign-in");
         router.push(`/${userName}`);
         return;
@@ -34,9 +32,13 @@ const AdminLayout = ({ children, params }: AdminLayoutProps) => {
       setIsLoading(false);
     };
 
-    const timer = setTimeout(checkAuth, 500);
-    return () => clearTimeout(timer);
-  }, [userName, router]);
+    if (isLoggedIn && currentUser) {
+      const timer = setTimeout(checkAuth, 500);
+      return () => clearTimeout(timer);
+    } else if (!isLoggedIn) {
+      router.push('/sign-in');
+    }
+  }, [userName, router, currentUser, isLoggedIn]);
 
   if (isLoading) {
     return (

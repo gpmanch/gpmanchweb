@@ -20,28 +20,4 @@ export async function getCurrentUserFromHeaders(): Promise<TokenPayload | null> 
     }
 }
 
-// Server-side utility to check if user is admin from request headers
-export async function isUserAdminFromHeaders(): Promise<boolean> {
-    const user = await getCurrentUserFromHeaders();
-    return user?.isAdmin === true;
-}
-
-// Server action utility to get current user ID from cookies
-export async function getCurrentUserId(): Promise<string | null> {
-    try {
-        const { cookies } = await import('next/headers');
-        const cookieStore = await cookies();
-        const token = cookieStore.get('accessToken')?.value;
-
-        if (!token) {
-            return null;
-        }
-
-        const payload = verifyAccessToken(token);
-        return payload?.userId || null;
-    } catch {
-        return null;
-    }
-}
-
 

@@ -1,7 +1,7 @@
 "use client";
 
 import { ReactNode } from 'react';
-import { isUserAdmin } from '@/lib/auth-client';
+import { useAuth } from '@/components/context/auth-context';
 
 interface AdminProtectionProps {
   children: ReactNode;
@@ -9,7 +9,8 @@ interface AdminProtectionProps {
 }
 
 export function AdminProtection({ children, fallback }: AdminProtectionProps) {
-  const isAdmin = isUserAdmin();
+  const { user } = useAuth();
+  const isAdmin = user?.isAdmin;
 
   if (!isAdmin) {
     return fallback ? <>{fallback}</> : null;
@@ -23,7 +24,8 @@ export function withAdminProtection<P extends object>(
   fallback?: ReactNode
 ) {
   return function AdminProtectedComponent(props: P) {
-    const isAdmin = isUserAdmin();
+    const { user } = useAuth();
+    const isAdmin = user?.isAdmin;
 
     if (!isAdmin) {
       return fallback ? <>{fallback}</> : null;

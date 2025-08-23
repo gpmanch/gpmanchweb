@@ -1,5 +1,5 @@
 import { NextResponse, NextRequest } from "next/server";
-import { getCurrentUser } from "./lib/auth-client";
+import { verifyAccessToken } from "./lib/jwt";
 
 export default async function middleware(request: NextRequest) {
   const publicRoutes = [
@@ -16,8 +16,14 @@ export default async function middleware(request: NextRequest) {
   }
 
   // Ensuring user is authenticated
-  const currentUser = await getCurrentUser();
-  if (!currentUser) {
+  const authHeader = request.headers.get('authorization');
+  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    return NextResponse.redirect(new URL("/sign-in", request.url));
+  }
+
+  const token = authHeader.substring(7);
+  const payload = verifyAccessToken(token);
+  if (!payload) {
     return NextResponse.redirect(new URL("/sign-in", request.url));
   }
 

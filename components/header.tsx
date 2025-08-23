@@ -5,7 +5,8 @@ import Image from "next/image";
 import { useLanguage } from "./language";
 import NextTopLoader from 'nextjs-toploader';
 import { Button } from "./ui/button";
-import { getCurrentUser, isAuthenticated, logout } from "@/lib/auth-client";
+import { logout } from "@/lib/auth-client";
+import { useAuth } from "@/components/context/auth-context";
 import { User, LogOut } from "lucide-react";
 
 const guestRoutes = [
@@ -59,9 +60,7 @@ export const Header = () => {
     const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
     const [mounted, setMounted] = useState(false);
     const { isHindi, setLanguage } = useLanguage();
-
-    const currentUser = getCurrentUser();
-    const isLoggedIn = isAuthenticated();
+    const { user: currentUser, isLoggedIn } = useAuth();
 
     useEffect(() => {
         setMounted(true);

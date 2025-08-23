@@ -4,9 +4,12 @@ import { useRouter } from "next/navigation";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import React from "react"; // Added for useEffect
+import { setLocalStorageItem } from "@/lib/auth-client";
+import { useAuth } from "@/components/context/auth-context";
 
 export default function SignUpForm() {
     const router = useRouter();
+    const { refreshAuth } = useAuth();
     const [formData, setFormData] = useState({
         firstName: "",
         lastName: "",
@@ -99,6 +102,13 @@ export default function SignUpForm() {
             });
             const data = await response.json();
             if (response.ok) {
+                // Store the access token in localStorage
+                if (data.accessToken) {
+                    setLocalStorageItem('accessToken', data.accessToken);
+                }
+                // Refresh auth state to update header
+                refreshAuth();
+                // Use router for client-side navigation
                 router.push(`/${data.user?.userName}`);
             } else {
                 setError(data.message || "Register failed. Please try again.");

@@ -104,21 +104,6 @@ export function logout(): void {
   }
 }
 
-// Utility to check if current user is admin
-export function isUserAdmin(): boolean {
-  try {
-    const accessToken = getLocalStorageItem('accessToken');
-    if (!accessToken) return false;
-
-    // Decode JWT token (without verification for client-side check)
-    const payload = JSON.parse(atob(accessToken.split('.')[1]));
-    return payload.isAdmin === true;
-  } catch (error) {
-    console.error('Error checking admin status:', error);
-    return false;
-  }
-}
-
 // Utility to get current user info from token
 export function getCurrentUser(): { userId: string; email: string; userName?: string; isAdmin: boolean } | null {
   try {
